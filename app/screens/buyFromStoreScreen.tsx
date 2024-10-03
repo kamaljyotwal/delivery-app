@@ -3,6 +3,7 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ScrollView, Text, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
+import { router } from 'expo-router';
 
 const BuyFromStoreScreen = () => {
     const navigation = useNavigation();
@@ -28,13 +29,11 @@ const BuyFromStoreScreen = () => {
 
                     <View style={styles.inputContainer}>
                         <Text style={styles.textLabel}>Find your store and list items</Text>
-                        <View style={styles.inputWrapper}>
-                            {/* <Icon name="store" size={20} style={styles.inputIcon} /> */}
-                            <Image source={require("../../assets/images/b1.png")} style={styles.inputIcon} />
-                            <TextInput
-                                placeholder="Select a store for items you need"
-                                style={styles.input}
-                            />
+                        <View >
+                            <TouchableOpacity style={styles.inputWrapper} onPress={() => router.push(`./selectAStore`)}>
+                                <Image source={require("../../assets/images/b1.png")} style={styles.inputIcon} />
+                                <Text style={styles.input}>Select a store for items you need</Text>
+                            </TouchableOpacity>
                         </View>
                         <View style={styles.inputWrapper}>
                             <Image source={require("../../assets/images/b2.png")} style={styles.inputIcon} />
