@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, FlatList, StyleSheet, Modal } 
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "react-native";
-
+import { router } from 'expo-router';
 const stores = [
     {
         id: "1",
@@ -94,6 +94,13 @@ const SelectAStore = () => {
         ? [styles.confirmButtonText, styles.confirmButtonTextEmpty]
         : styles.confirmButtonText;
 
+    const handleStoreSelect = (store: any) => {
+        router.push({
+            pathname: "./storeLocationMap",
+            params: { store: JSON.stringify(store) }
+        });
+    };
+
     return (
         <View style={styles.container}>
             <View style={{ backgroundColor: "#f4f4f4", marginLeft: -10, marginRight: -10 }}>
@@ -121,7 +128,7 @@ const SelectAStore = () => {
                 data={filteredStores}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <>
+                    <TouchableOpacity onPress={() => handleStoreSelect(item)}>
                         <View style={styles.storeItem}>
                             <Image
                                 source={require("../../assets/images/storelogo.png")}
@@ -135,7 +142,7 @@ const SelectAStore = () => {
                             </View>
                         </View>
                         <View style={styles.divider} />
-                    </>
+                    </TouchableOpacity>
                 )}
             />
 

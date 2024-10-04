@@ -1,11 +1,14 @@
 // screens/BuyFromStoreScreen.tsx
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet, ScrollView, Text, SafeAreaView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Image } from 'react-native';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
+import * as Location from 'expo-location';
 
 const BuyFromStoreScreen = () => {
+    const [dropLocation, setDropLocation] = useState('');
+    const params = useLocalSearchParams();
     const navigation = useNavigation();
     React.useLayoutEffect(() => {
         navigation.setOptions({
@@ -19,6 +22,29 @@ const BuyFromStoreScreen = () => {
             // },
         });
     }, [navigation]);
+
+    useEffect(() => {
+        if (params.selectedLocation) {
+            const location = JSON.parse(params.selectedLocation);
+            setDropLocation(`${location.latitude.toFixed(4)}, ${location.longitude.toFixed(4)}`);
+        }
+    }, [params.selectedLocation]);
+
+    const handleOpenMap = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+            alert('Permission to access location was denied');
+            return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        router.push({
+            pathname: './mapSelector',
+            params: {
+                initialLocation: JSON.stringify(location.coords),
+            },
+        });
+    };
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -35,12 +61,11 @@ const BuyFromStoreScreen = () => {
                                 <Text style={styles.input}>Select a store for items you need</Text>
                             </TouchableOpacity>
                         </View>
-                        <View style={styles.inputWrapper}>
-                            <Image source={require("../../assets/images/b2.png")} style={styles.inputIcon} />
-                            <TextInput
-                                placeholder="Add item name"
-                                style={styles.input}
-                            />
+                        <View >
+                            <TouchableOpacity style={styles.inputWrapper} onPress={() => router.push(`./buyAnything`)}>
+                                <Image source={require("../../assets/images/b2.png")} style={styles.inputIcon} />
+                                <Text style={styles.input}>Add item name</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
 
@@ -48,10 +73,13 @@ const BuyFromStoreScreen = () => {
 
                     <View style={styles.inputWrapper}>
                         <Image source={require("../../assets/images/b3.png")} style={styles.inputIconSmaller} />
-                        <TextInput
-                            placeholder="Add drop location"
-                            style={styles.input}
-                        />
+                        <TouchableOpacity style={styles.input} onPress={handleOpenMap}>
+                            <TextInput
+                                placeholder="Add drop location"
+                                value={dropLocation}
+                                editable={false}
+                            />
+                        </TouchableOpacity>
                     </View>
 
                     <Text style={styles.note}>
